@@ -1,0 +1,26 @@
+% !TEX root = ./final_report.tex
+\section{Obstacle Sensing \label{sec:sensing}}
+For the purposes of this short project, the sensor was assumed to be very simplistic.  A radius of effective sensing from the vehicle's current location is defined in the simulation parameters.  If any portion of an obstacle lies within this radius away from the vehicle's position, then the entire obstacle is sensed, and saved to the list of known obstacles.  The sensor neglects any visual obstruction from other obstacles.  For the simulations performed in this report, the sensing radius was assumed to be 10 meters.
+
+\section{RRT \label{sec:training}}
+The problem of optimal path planning within a cluttered environment is far from trivial.  The union of the numerous constraints imposed by the obstacles non-convex,.  This makes finding a true optimal solution, especially in spaces of 3 or more dimensions, very computationally expensive.  Instead, we applied a suboptimal path planning algorithm coded by Clifton, et. al. \cite{clifton2008evaluating}
+
+\subsection{Path Finding}
+ The path finding algorithm is based on the Rapidly-exploring Random Trees algorithm, which is a highly popular member of the random sampling class of motion planning algorithms.  This particular implementation utilizes multiple randomly-exploring trees, one expanding from the start node, another expanding from the goal node, and potentially other seed nodes throughout the unoccupied space.  As the trees expand, they look to connect a node from one tree to another without a collision with an obstacle.  If such a connection is made, then the two trees are merged.  Once all trees have been merged then a feasible path from the start to finish has been found, and the search algorithm exits.
+
+%\begin\texttt{{figure}[t]
+%\centering
+%\includegraphics[width=8cm]{raw_data.eps}
+%\caption{EUR/USD tick-by-tick bid-ask prices on November $5^{\text{th}}$, 2012}
+%\label{fig:figure1}
+%\end{fig}ure}
+%\begin{figure}[t]
+%\centering
+%\includegraphics[width=8cm]{rawVsSmooth.eps}
+%\caption{Comparison of raw data and smoothed data}
+%\label{fig:figure3}
+%\end{figure}
+
+\subsection{Path Smoothing}
+	Random sampling methods greatly improve the speed of computing a feasible solution, but often produce results that are far from optimal.  A variety of smoothing techniques exist to shorten the path found by the RRT search.  The RRT Matlab software also includes a smoothing stage.  The smoothing algorithm takes advantage of the requirement that all obstacles are defined as planes in 3-D space.  The point where the RRT crosses the extended planes is used to form an initial smoothing.  Then those points are moved along the planes to the obstacle boundary if removing the point is not feasible.
+	The smoothed curve is returned by the RRT planner as a series of line segments from the start to the goal.  The final path that is returned is seen to be acceptably good for practical application on a consistent basis.

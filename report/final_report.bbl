@@ -1,0 +1,22 @@
+\begin{thebibliography}{1}
+
+\bibitem{bouabdallah2007design}
+Samir Bouabdallah.
+\newblock Design and control of quadrotors with application to autonomous
+  flying.
+\newblock {\em Lausanne Polytechnic University}, 2007.
+
+\bibitem{clifton2008evaluating}
+Matthew Clifton, Gavin Paul, Ngai Kwok, Dikai Liu, and D-L Wang.
+\newblock Evaluating performance of multiple rrts.
+\newblock In {\em Mechtronic and Embedded Systems and Applications, 2008. MESA
+  2008. IEEE/ASME International Conference on}, pages 564--569. IEEE, 2008.
+
+\bibitem{yang2010efficient}
+Kwangjin Yang, Seng~Keat Gan, and Salah Sukkarieh.
+\newblock An efficient path planning and control algorithm for {RUAV}s in
+  unknown and cluttered environments.
+\newblock {\em Journal of Intelligent and Robotic Systems}, 57(1-4):101--122,
+  2010.
+
+\end{thebibliography}
