@@ -1,0 +1,82 @@
+% !TEX root = ./final_report.tex
+\section{ MPC \label{sec:mpc}}
+\subsection{Full Model with Linearized Equations} \label{sub:mpc_full}
+We can write Equation \eqref{eq:lin_eom} as
+\begin{equation} \label{eq:aug_lin_eom}
+\frac{d X}{d t} = \tilde{A} X + \tilde{B} \delta U + \tilde{G}
+\end{equation}
+
+To put \eqref{eq:aug_lin_eom} in a form amenable to use in an MPC formulation, we approximate the change in time with a forward Euler formulation.
+
+\begin{equation}
+\frac{d X}{d t} \approx \frac{X(n+1) - X(n)}{\Delta t} = \tilde{A}X + \tilde{B}\delta U + \tilde{G}
+\end{equation}
+where $\Delta t$ is a time-step small enough so the linearized equations of motion are still a good approximation of the nonlinear equations.
+\begin{equation} \label{eq:mpc_eqn}
+ X(n+1) = [{\bf 1} + \Delta t \tilde{A}] X(n) +[\Delta t \tilde{B}]\delta U + [\Delta t\tilde{G}]
+\end{equation}
+
+
+In order to test the accuracy of the linearization and to select a time-step $\Delta t$ and a look-ahead number of steps $N$, we assessed how closely the linearized plant followed the behavior of the non-linear equations of motion. A value of $\Delta t = 0.01s$ and $N = 60$ yielded satisfactory results. Figure \eqref{fig:linearization} shows that the linearized plant followed the general trend of the non-linear plant (quadcopter). The linearization happened at time $t=0$ and the plant was advected in time by using Equation \eqref{eq:mpc_eqn} for $N$ steps. At intervals of $0.05s$, a random input value $\delta U$ was entered in order to produce a response in the system.
+
+\subsection{Simplified Model} \label{sub:mpc_simple}
+For the full simulation, a time-step of 0.01s was considered infeasible given the computation time required for the MPC algorithm.  An alternate system was considered, which assumes that a low-level stability controller on-board the UAV gives a closed-loop plant that behaves approximately as a point-mass with a thrust-vector input.  The force vector can be interpreted as an attitude command input to the stability controller, and a scaling of the motor thrusts such that the desired thrust magnitude is maintained.
+
+The complete MPC model framework for this simplified model used in the simulations shown in the attached videos is given mathematically below:
+
+\begin{equation} \label{eq:mpc_obj}
+\mathrm{minimize\;} 
+ C_p\sum_{i=1}^{N+1}\left\|\left(\frac{(p_s-p_g)^T(p_s-p_g)}{\|p_s-p_g\|_2^2}-I\right)(x^{(i)}-p_g)\right\|_2 + C_g\sum_{i=1}^{N+1}\|x^{(i)}-p_g\|_2 + \sum_{i=1}^{N}\|R^\frac{1}{2}u^{(i)}\|_2
+\end{equation}
+
+\begin{equation}
+\mathrm{subject \;to}
+\begin{bmatrix}
+x^{(1)} \\ \dot{x}^{(1)}
+\end{bmatrix}
+ = 
+\begin{bmatrix}
+x_1 \\ \dot{x}_1
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+u^{(0)} = u_0
+\end{equation}
+
+\begin{equation} \label{eq:mpc_dyn_constr}
+\begin{bmatrix}
+x^{(i+1)} \\ \dot{x}^{(i+1)}
+\end{bmatrix}
+=
+\begin{bmatrix}
+I & \Delta t I \\ 0 & I
+\end{bmatrix}
+\begin{bmatrix}
+x^{(i)} \\ \dot{x}^{(i)}
+\end{bmatrix}
++ \frac{\Delta t}{m}
+\begin{bmatrix}
+0 \\ I
+\end{bmatrix}
+u^{(i)}
++ \Delta t
+\begin{bmatrix}
+0 \\ g
+\end{bmatrix}
+\end{equation}
+\begin{equation} \label{eq:mpc_umax}
+\|u^{(i)}\|_2 \leq u_\mathrm{max}
+\end{equation}
+\begin{equation} \label{eq:mpc_u_constr}
+\sqrt{(u_1^{(i)})^2 + (u_1^{(i)})^2} \leq a_\mathrm{attitude} u_3^{(i)}
+\end{equation}
+\begin{equation} \label{eq:mpc_du_constr}
+\sqrt{(u_1^{(i)} - u_1^{(i-1)})^2 + (u_1^{(i)} - u_1^{(i-1)})^2} \leq a_\mathrm{rotation} u_3^{(i-1)}
+\end{equation}
+
+The discretized linear system model of the alternate system used in the MPC is of the same form as \eqref{eq:mpc_eqn} with different coefficient matrices as shown in the MPC constraint \eqref{eq:mpc_dyn_constr}.  A constraint is placed on the MPC optimization due to the finite tracking ability of the low-level controller. The UAV is restricted to a finite change in attitude command per time as expressed in equation \eqref{eq:mpc_du_constr}.  The UAV attitude is restricted such that the angle between body-fixed and earth-fixed z-axes cannot exceed 45 degrees by constraint equation \eqref{eq:mpc_u_constr}.  The maximum combined thrust from the 4 motors is restricted to be less than 100 Newtons \eqref{eq:mpc_umax}.
+
+The objective function \eqref{eq:mpc_obj} for the MPC minimizes a combination of the distance of the current location to the line containing the current line segment, the euclidean distance from the current location to the line segment's goal node, and the size of the thrust-vector.
+
+

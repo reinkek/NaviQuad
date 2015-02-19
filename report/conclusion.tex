@@ -1,0 +1,8 @@
+% !TEX root = ./final_report.tex
+\section{Conclusion}
+
+The encouraging results shown in this project neglect many important factors that must be accounted for before the method will be suitable for use on a physical vehicle.  The first, and biggest, factor is the time delay incurred by computation time of the RRT and MPC algorithms.  The code will need to be optimized, parallelized, and ported to a faster language such as C.  Some time delay will be inevitable, but when accounted for with a sufficiently small delay and accurate dynamic model, this factor will become manageable.  
+
+Nevertheless, we showed that combining RRT with MPC is a very powerful control strategy. RRT was always able to find a feasible path and MPC was able to control the quadcopter without the need of much tuning.
+
+The importance of the way the equations of motion are linearized is evident in our results. The fact that we were able to let the coupling of the attitude and displacements become evident in the linearization is what allowed us to use such a generic MPC for a plant as non-linear as a quadcopter. We were unable to find in the existing literature linearized equations of motion of a quadcopter in the form presented here. This theoretical development could be exploited to develop very generic LQR or LQG algorithms for quadcopters; there would be no need to tune attitude control separately from displacement control.
