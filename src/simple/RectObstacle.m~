@@ -73,8 +73,7 @@ classdef RectObstacle < Obstacle
                 end
             end
             % if invisibility can't be ruled out by shortcut: check cvx feasibility solution 
-	    % there is definitely a faster way to do this! (it is VERY slow)
-	    % but this was used for speed of implementation
+		%there is definitely a faster way to do this! but this was used for speed of implementation
             cvx_begin quiet
                 variable x(1,3)
                 minimize 0

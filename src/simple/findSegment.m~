@@ -27,12 +27,11 @@ function [new_segment, p0_new, p1_new] = findSegment( x, vertices, current_segme
             D(i) = inf;
         else
 		% x is between start-most and end-most planes
-            D(i) = norm(cross(v,x), 2); % Dist Cost: how far we are (normal) from line
+            D(i) = norm(cross(v,x), 2); % Dist Cost: how far we are from line
         end
         [minVal,new_segment] = min(D);
     end
 
-	% skip short line segments
     while (new_segment < n_points-1) && (norm(vertices(new_segment,:) - vertices(new_segment+1,:), 2) <= .1) 
         new_segment = new_segment + 1;
         %'skipped'

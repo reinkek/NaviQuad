@@ -1,4 +1,4 @@
-%this is a base class for specific obstacle classes in case we use multiple obsticle types. 
+%this is a wrapper class for specific obstacle classes. 
 %maybe some generic methods will be available here later if more obstacle shapes are used...
 classdef Obstacle
     methods
